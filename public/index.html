@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#fff6ec" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1d1a24" media="(prefers-color-scheme: dark)">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Nonocat">
+  <meta name="description" content="Puzzle logici a immagini. Livelli infiniti, funziona anche offline.">
+  <title>Nonocat</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main id="app">
+
+    <section class="screen" id="screen-home">
+      <button class="player-chip" data-go="player" aria-label="Giocatore">
+        <span data-icon="user"></span><span id="home-player"></span><span class="sync-dot" id="sync-dot"></span>
+      </button>
+      <div class="home-hero">
+        <canvas id="logo" width="10" height="10" aria-hidden="true"></canvas>
+        <h1>Nonocat</h1>
+        <p class="tagline">puzzle logici a immagini</p>
+      </div>
+      <nav class="menu">
+        <button class="menu-btn primary" data-action="continue">
+          <span class="ico" data-icon="play"></span>
+          <span class="label">Gioca<small id="home-continue">Livello 1</small></span>
+        </button>
+        <button class="menu-btn" data-action="daily">
+          <span class="ico" data-icon="calendar"></span>
+          <span class="label">Puzzle del giorno<small id="home-daily"></small></span>
+          <span class="badge" id="home-daily-badge"></span>
+        </button>
+        <button class="menu-btn" data-go="pictures">
+          <span class="ico" data-icon="image"></span>
+          <span class="label">Disegni<small id="home-pictures"></small></span>
+        </button>
+        <button class="menu-btn" data-go="levels">
+          <span class="ico" data-icon="grid"></span>
+          <span class="label">Tutti i livelli<small id="home-levels"></small></span>
+        </button>
+        <button class="menu-btn" data-go="quick">
+          <span class="ico" data-icon="dice"></span>
+          <span class="label">Partita veloce<small>un puzzle nuovo a caso, scegli tu la misura</small></span>
+        </button>
+      </nav>
+      <div class="home-footer">
+        <button class="text-btn" data-go="help"><span data-icon="help"></span> Come si gioca</button>
+        <button class="text-btn" data-go="settings"><span data-icon="gear"></span> Impostazioni</button>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-player">
+      <header class="bar">
+        <button class="icon-btn" data-back id="player-back" aria-label="Indietro"><span data-icon="back"></span></button>
+        <h2>Chi gioca?</h2>
+        <span class="bar-note"></span>
+      </header>
+      <div class="scroll">
+        <p class="note">Scrivi il tuo nome. I tuoi progressi vengono salvati con questo nome, così li ritrovi anche su un altro telefono.</p>
+        <form class="player-form" id="player-form" autocomplete="off">
+          <input id="player-name" type="text" maxlength="20" placeholder="Il tuo nome" enterkeyhint="go" autocapitalize="words" spellcheck="false">
+          <button class="small-btn primary" type="submit">Gioca</button>
+        </form>
+        <div class="section-title" id="player-list-title"><span>Su questo dispositivo</span></div>
+        <div class="player-list" id="player-list"></div>
+        <p class="note small" id="player-note"></p>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-pictures">
+      <header class="bar">
+        <button class="icon-btn" data-back aria-label="Indietro"><span data-icon="back"></span></button>
+        <h2>Disegni</h2>
+        <span class="bar-note" id="pictures-count"></span>
+      </header>
+      <div class="scroll" id="pictures-list"></div>
+    </section>
+
+    <section class="screen" id="screen-levels">
+      <header class="bar">
+        <button class="icon-btn" data-back aria-label="Indietro"><span data-icon="back"></span></button>
+        <h2>Tutti i livelli</h2>
+        <span class="bar-note" id="levels-count"></span>
+      </header>
+      <div class="pager">
+        <button class="icon-btn" id="levels-prev" aria-label="Pagina precedente"><span data-icon="back"></span></button>
+        <span id="levels-range"></span>
+        <button class="icon-btn flip" id="levels-next" aria-label="Pagina successiva"><span data-icon="back"></span></button>
+      </div>
+      <div class="scroll"><div class="tiles" id="levels-grid"></div></div>
+    </section>
+
+    <section class="screen" id="screen-quick">
+      <header class="bar">
+        <button class="icon-btn" data-back aria-label="Indietro"><span data-icon="back"></span></button>
+        <h2>Partita veloce</h2>
+        <span class="bar-note"></span>
+      </header>
+      <div class="scroll">
+        <p class="note">Ogni puzzle viene creato sul momento e si può sempre risolvere con la logica, senza tirare a indovinare.</p>
+        <div class="size-grid" id="quick-sizes"></div>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-settings">
+      <header class="bar">
+        <button class="icon-btn" data-back aria-label="Indietro"><span data-icon="back"></span></button>
+        <h2>Impostazioni</h2>
+        <span class="bar-note"></span>
+      </header>
+      <div class="scroll">
+        <div class="settings">
+          <div class="setting">
+            <span><b id="settings-player"></b><small id="settings-sync"></small></span>
+            <button class="small-btn" data-go="player">Cambia</button>
+          </div>
+          <label class="setting">
+            <span><b>Controllo errori</b><small>Ogni mossa sbagliata costa un cuore. Disattivalo per risolvere liberamente, con la possibilità di annullare.</small></span>
+            <input type="checkbox" data-setting="check">
+          </label>
+          <label class="setting">
+            <span><b>Croci automatiche</b><small>Riempie di ✕ il resto di una riga o colonna completata.</small></span>
+            <input type="checkbox" data-setting="autoCross">
+          </label>
+          <label class="setting">
+            <span><b>Suoni</b></span>
+            <input type="checkbox" data-setting="sound">
+          </label>
+          <label class="setting">
+            <span><b>Vibrazione</b><small>Solo su Android.</small></span>
+            <input type="checkbox" data-setting="vibrate">
+          </label>
+          <div class="setting">
+            <span><b>Tema</b></span>
+            <div class="seg" id="theme-seg">
+              <button data-theme-opt="auto">Auto</button>
+              <button data-theme-opt="light">Chiaro</button>
+              <button data-theme-opt="dark">Scuro</button>
+            </div>
+          </div>
+          <div class="setting">
+            <span><b>Azzera progressi</b><small>Cancella tutti i puzzle risolti e le partite in corso, anche online.</small></span>
+            <button class="small-btn danger" id="reset-progress">Azzera</button>
+          </div>
+        </div>
+        <p class="note small" id="offline-status"></p>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-help">
+      <header class="bar">
+        <button class="icon-btn" data-back aria-label="Indietro"><span data-icon="back"></span></button>
+        <h2>Come si gioca</h2>
+        <span class="bar-note"></span>
+      </header>
+      <div class="scroll help">
+        <p>Colora le caselle giuste per scoprire un'immagine nascosta.</p>
+        <p>I numeri accanto a ogni riga e sopra ogni colonna indicano, in ordine, quanto sono lunghi i gruppi di caselle colorate in quella linea. <b>3 1</b> vuol dire un gruppo di tre, almeno una casella vuota, poi una casella da sola.</p>
+        <p>Usa <b>■ Riempi</b> per colorare le caselle e <b>✕ Croce</b> per segnare quelle che sai essere vuote. Trascina il dito per segnare più caselle in una volta: la bolla mostra quante ne hai coperte.</p>
+        <p>Quando una riga o colonna è completa, i suoi numeri diventano grigi. Sei bloccato? Il pulsante <b>Aiuto</b> trova la prossima mossa logica e te la mostra.</p>
+        <p>Con il controllo errori attivo, ogni mossa sbagliata costa uno dei tre cuori. Se li finisci puoi ricominciare oppure continuare.</p>
+        <p>Ogni puzzle ha una sola soluzione e si risolve senza tirare a indovinare.</p>
+        <p>Su un telefono piccolo puoi ingrandire la griglia con la lente e farla scorrere con due dita.</p>
+        <p class="note small">Su computer, il tasto destro del mouse mette una croce.</p>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-game">
+      <header class="bar game-bar">
+        <button class="icon-btn" data-back aria-label="Indietro"><span data-icon="back"></span></button>
+        <div class="game-title">
+          <div id="game-name"></div>
+          <div id="game-sub"></div>
+        </div>
+        <div class="game-right">
+          <div id="hearts" aria-label="Cuori"></div>
+          <button class="icon-btn" id="btn-zoom" aria-label="Ingrandisci"><span data-icon="zoom"></span></button>
+          <button class="icon-btn" id="btn-restart" aria-label="Ricomincia"><span data-icon="restart"></span></button>
+        </div>
+      </header>
+      <div id="board-wrap">
+        <div id="board-inner"><div id="board"></div></div>
+      </div>
+      <div id="stroke-count"></div>
+      <footer class="game-tools">
+        <button class="tool-btn" id="btn-undo"><span data-icon="undo"></span><small>Annulla</small></button>
+        <div class="tool-toggle" role="radiogroup" aria-label="Strumento">
+          <button id="tool-fill" class="on" role="radio" aria-checked="true" aria-label="Riempi"><span class="sw-fill"></span></button>
+          <button id="tool-cross" role="radio" aria-checked="false" aria-label="Croce"><span class="sw-cross"></span></button>
+        </div>
+        <button class="tool-btn" id="btn-hint"><span data-icon="bulb"></span><small>Aiuto</small></button>
+      </footer>
+      <div class="win-sheet" id="win-sheet" hidden>
+        <div class="win-card">
+          <div class="win-title">Risolto!</div>
+          <div class="win-name" id="win-name"></div>
+          <div class="win-stats" id="win-stats"></div>
+          <div class="win-actions">
+            <button class="small-btn" id="win-menu">Indietro</button>
+            <button class="small-btn primary" id="win-next">Avanti</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="modal" id="modal" hidden>
+    <div class="modal-card">
+      <h3 id="modal-title"></h3>
+      <p id="modal-text"></p>
+      <div class="modal-actions" id="modal-actions"></div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/rng.js"></script>
+  <script src="js/solver.js"></script>
+  <script src="js/generator.js"></script>
+  <script src="js/pictures.js"></script>
+  <script src="js/sync.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

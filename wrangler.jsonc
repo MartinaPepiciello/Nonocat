@@ -1,0 +1,17 @@
+// Cloudflare settings: the game in public/ plus the save database, deployed together.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "nonocat",
+  "main": "worker/index.js",
+  "compatibility_date": "2025-10-01",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS"
+  },
+  "durable_objects": {
+    "bindings": [{ "name": "PLAYERS", "class_name": "PlayerSave" }]
+  },
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["PlayerSave"] }
+  ]
+}
